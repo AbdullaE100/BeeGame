@@ -36,6 +36,8 @@ class BSTTest(unittest.TestCase):
         successor = BST.get_successor(BST.root.left.right)
         self.assertEqual(successor, None)
 
+
+
     @timeout()
     @number("1.2")
     def test_p2(self):
