@@ -18,7 +18,7 @@ class BeehiveSelector:
     def __init__(self, max_beehives: int):
         raise NotImplementedError()
 
-    def set_all_beehives(self, hive_list: list[Beehive]):
+    def set_all_beehives(self, hive_list: 'list[Beehive]'):
         raise NotImplementedError()
     
     def add_beehive(self, hive: Beehive):

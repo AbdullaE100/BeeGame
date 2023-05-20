@@ -65,15 +65,18 @@ class Percentiles(Generic[T]):
 
         """
         # calculating the treshholds for x and y
-        threshold_x_element : int = ceil(x*(len(self.store)))    #O(1)
-        threshold_y_element : int = ceil(y*(len(self.store)))    
-
+        
+        threshold_x_element : int = ceil((x/100)*(len(self.store)))    #O(1)
+        threshold_y_element : int = len(self.store)-1 -ceil((y/100)*(len(self.store)))   
+        
+        
         #calcuting the kth smallest elements for the thresholds
         """
         remember that kth_smallest returns the node and not the item itself
         """
-        threshold_x = self.store.kth_smallest(threshold_x_element, self.store.root) #O(D), D is depth
-        threshold_y = self.store.kth_smallest(threshold_y_element, self.store.root)
+        threshold_x = self.store.kth_smallest(threshold_x_element+1, self.store.root) #O(D), D is depth
+        threshold_y = self.store.kth_smallest(threshold_y_element+1, self.store.root)
+        
 
         
         lst = []
@@ -88,10 +91,7 @@ class Percentiles(Generic[T]):
             if ((current_node.key >= x) and (current_node.key <= y)):
                 lst.append(current_node.key)
             if (y > current_node.key):
-                self.aux_ratio(current_node.right, x, y, lst)
-            
-            
-            
+                self.aux_ratio(current_node.right, x, y, lst)                 
         return lst
 
 
@@ -104,13 +104,22 @@ class Percentiles(Generic[T]):
 
 
 if __name__ == "__main__":
-    points = list(range(50))
+    """points = list(range(50))
     import random
     random.shuffle(points)
     p = Percentiles()
     for point in points:
         p.add_point(point)
     # Numbers from 8 to 16.
-    print(p.ratio(15, 66))
+    print(p.ratio(15, 66))"""
+    import random
+    random.seed(1293810293)
+    p = Percentiles()
+    points = [4, 9, 14, 15, 16, 82, 87, 91, 92, 99]
+    random.shuffle(points)
+    for point in points:
+        p.add_point(point)
+    res = p.ratio(0, 42)
+    print(res)
 
     
