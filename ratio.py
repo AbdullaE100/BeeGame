@@ -3,74 +3,126 @@ from typing import Generic, TypeVar
 from math import ceil
 from bst import BinarySearchTree
 
+
 T = TypeVar("T")
 I = TypeVar("I")
-
 
 class Percentiles(Generic[T]):
 
     def __init__(self) -> None:
         """
-        Initializes a new percentiles object.
+        Initialises an empty binary search tree as the percentile object
+
+        Best Case - O(1), since initialisation of empty binary search tree is constant
+
+        Worst Case - same as best case
         """
-        self.items = BinarySearchTree()
-        self.size = 0
 
-    def add_point(self, item: T):
+        # Using a binary search tree as the store for the points
+        self.items : BinarySearchTree = BinarySearchTree()
+    
+    def add_point(self, item: T) -> None:
         """
-        Adds an item to the percentiles.
+        Adding a point from the object
 
-        Args:
-            item: The item to add.
-        """
-        self.items[item] = item
-        self.size += 1
-
-    def remove_point(self, item: T):
-        """
-        Removes an item from the percentiles.
-
-        Args:
-            item: The item to remove.
-        """
-        del self.items[item]
-
-    def ratio(self, x, y) -> list[T]:
-        """
-        Returns a list of items that are between the xth and yth percentiles.
-
-        Args:
-            x: The xth percentile.
-            y: The yth percentile.
-
-        Returns:
-            A list of items that are between the xth and yth percentiles.
+        Best Case -  O(CompK) inserts the item at the root.
             
-        Time complexities:
-        Best case: O(log n), where n is the number of items in the percentiles.
-        Worst case: O(n), where n is the number of items in the percentiles.
+        Worst case - O(CompK * D) inserting at the bottom of the tree
+            
+        where D is the depth of the tree
+        CompK is the complexity of comparing the keys
 
         """
-        front = ceil((x / 100) * len(self.items))
-        rear = ceil((y / 100) * len(self.items))
-        elements = []
+        # The key, value pair is the same
+        self.items[item] = item
+    
+    def remove_point(self, item: T) -> None:
+        """
+        Removing a point from the object
 
-        while front < (len(self.items) - rear):
-            item = self.items.kth_smallest(front + 1, self.items.root)
-            elements.append(item.item)
-            front += 1
+        Best Case -  O(CompK) deleting the item at the root.
+            
+        Worst case - ***complete***
+            
+        where D is the depth of the tree
+        CompK is the complexity of comparing the keys
 
-        return elements
+        """
+        # delete the node from the binary tree
+        del self.items[item]
+    
+
+    def ratio(self, x, y) -> list[int]:
+        """
+        Returns a list that satisfies the ratio requirements
+
+        Best Case -  ***complete***
+            
+        Worst case - ***complete***
+            
+        where D is the depth of the tree
+        CompK is the complexity of comparing the keys
+
+        """
+        # calculating the treshholds for x and y
+        
+        threshold_x_element : int = ceil((x/100)*(len(self.items)))    #O(1)
+        threshold_y_element : int = len(self.items)-1 -ceil((y/100)*(len(self.items)))   
+        
+        
+        #calcuting the kth smallest elements for the thresholds
+        """
+        remember that kth_smallest returns the node and not the item itself
+        """
+        threshold_x = self.items.kth_smallest(threshold_x_element+1, self.items.root) #O(D), D is depth
+        threshold_y = self.items.kth_smallest(threshold_y_element+1, self.items.root)
+        
+
+        
+        lst = []
+        if threshold_x is None or threshold_y is None:
+            return []
+        final_list = self.aux_ratio(self.items.root, threshold_x.item, threshold_y.item, lst)
+        return final_list
+    
+    def aux_ratio(self, current_node, x, y, lst) -> list[int]:
+        if current_node is not None:
+            
+            if (x <= current_node.key):
+                self.aux_ratio(current_node.left, x, y, lst)
+            if ((current_node.key >= x) and (current_node.key <= y)):
+                lst.append(current_node.key)
+            if (y > current_node.key):
+                self.aux_ratio(current_node.right, x, y, lst)                 
+        return lst
+
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
-    points = list(range(50))
+    """points = list(range(50))
     import random
-
     random.shuffle(points)
     p = Percentiles()
     for point in points:
         p.add_point(point)
     # Numbers from 8 to 16.
-    print(p.ratio(15, 66))
+    print(p.ratio(15, 66))"""
+    import random
+    random.seed(1293810293)
+    p = Percentiles()
+    points = [4, 9, 14, 15, 16, 82, 87, 91, 92, 99]
+    random.shuffle(points)
+    for point in points:
+        p.add_point(point)
+    res = p.ratio(0, 42)
+    print(res)
+
     
+
