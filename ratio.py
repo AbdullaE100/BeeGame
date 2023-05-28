@@ -42,7 +42,7 @@ class Percentiles(Generic[T]):
 
         Best Case -  O(CompK) deleting the item at the root.
             
-        Worst case - ***complete***
+        Worst case - O(CompK*D) deleting the leaf node.
             
         where D is the depth of the tree
         CompK is the complexity of comparing the keys
@@ -56,9 +56,9 @@ class Percentiles(Generic[T]):
         """
         Returns a list that satisfies the ratio requirements
 
-        Best Case -  ***complete***
+        Best Case -  O(D)
             
-        Worst case - ***complete***
+        Worst case - same as best case
             
         where D is the depth of the tree
         CompK is the complexity of comparing the keys
