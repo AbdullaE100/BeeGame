@@ -1,42 +1,45 @@
 from __future__ import annotations
-from typing import List
 from threedeebeetree import Point
+from ratio import Percentiles
+
 
 def make_ordering(my_coordinate_list: list[Point]) -> list[Point]:
+    """
+    Sorts a list of points by their x-coordinates.
 
-    def recursive_build(indices, depth=0):
-        print(f"indices: {indices}, type: {type(indices)}")
+    Args:
+        my_coordinate_list: A list of points.
 
-        # Base case: if there's only one point or no point, return it
-        if len(indices) == 0:
-            return []
-        elif len(indices) == 1:
-            return [indices[0]]
+    Returns:
+        A list of points sorted by their x-coordinates.
 
-        # Choose the splitting dimension based on the current depth
-        dim = depth % 3
+    Time complexity:
+        O(n) in the best case and O(n^2) in the worst case, where n is the number of points in the list.
+    """
 
-        # Sort the points based on the splitting dimension
-        indices.sort(key=lambda i: my_coordinate_list[i][dim])
+    # Check if the list is empty. If it is, return an empty list.
+    if not my_coordinate_list:
+        return []
 
-        # Find the median point and add it to the ordering
-        median_idx = len(indices) // 2
+    # Extract the x-coordinates from the coordinate list.
+    coordinate_x = [point[0] for point in my_coordinate_list]
 
-        # adjust median if it falls into a group of same values to avoid skewness
-        while median_idx < len(indices) - 1 and my_coordinate_list[indices[median_idx]][dim] == my_coordinate_list[indices[median_idx+1]][dim]:
-            median_idx += 1
-        # If the number of same values is greater than half of the list, then move the median back to create a better balance
-        while median_idx > 0 and my_coordinate_list[indices[median_idx]][dim] == my_coordinate_list[indices[median_idx-1]][dim]:
-            median_idx -= 1
+    # Create a Percentiles object and add the x-coordinates.
+    percentiles = Percentiles()
+    for coordinate in coordinate_x:
+        percentiles.add_point(coordinate)
 
-        ordering = [indices[median_idx]]
+    # Determine the x-coordinate of the root node.
+    if len(percentiles.store) == 0:
+        return []
 
-        # Recursively build the left and right subtrees
-        left_subtree = recursive_build(indices[:median_idx], depth + 1)
-        right_subtree = recursive_build(indices[median_idx + 1:], depth + 1)
+    root_x_values = percentiles.ratio(0, len(percentiles.store))
+    if not root_x_values:
+        return []
 
-        # Return the ordering
-        return ordering + left_subtree + right_subtree
+    x_root = root_x_values[0]
 
-    # Build the ordering recursively
-    return [my_coordinate_list[i] for i in recursive_build(list(range(len(my_coordinate_list))))]
+    # Sort the coordinate list based on the x-coordinate of the root node.
+    ordered_coordinates = sorted(my_coordinate_list, key=lambda point: abs(point[0] - x_root))
+
+    return ordered_coordinates
