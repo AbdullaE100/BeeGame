@@ -30,10 +30,10 @@ def make_ordering(my_coordinate_list: list[Point]) -> list[Point]:
         percentiles.add_point(coordinate)
 
     # Determine the x-coordinate of the root node.
-    if len(percentiles.store) == 0:
+    if not percentiles.items:
         return []
 
-    root_x_values = percentiles.ratio(0, len(percentiles.store))
+    root_x_values = percentiles.ratio(0, percentiles.items.length)
     if not root_x_values:
         return []
 
